@@ -1,11 +1,18 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './../../constants/Colors'
-import { useRouter } from 'expo-router'
+import { useRouter, useNavigation } from 'expo-router'
 
 export default function StartNewTripCard() {
     const router = useRouter();
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerShown: false,
+        })
+    }, []);
 
     return (
         <View style={{

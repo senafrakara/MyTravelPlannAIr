@@ -20,6 +20,7 @@ export default function SearchPlace() {
             headerTransparent: true,
             headerTitle: 'Search Place'
         })
+
     }, [navigation]);
 
     return (

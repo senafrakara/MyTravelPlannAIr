@@ -38,7 +38,8 @@ export default function SelectDates() {
             ...tripData,
             startDate: startDate,
             endDate: endDate,
-            totalNumberOfDays: totalNumberOfDays + 1
+            totalNumberOfDays: totalNumberOfDays + 1,
+            totalNumberOfNights: totalNumberOfDays
         });
         router.push('create-trip/select-budget');
 

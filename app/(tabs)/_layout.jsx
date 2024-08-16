@@ -35,7 +35,8 @@ export default function TabLayout() {
 
     return (
         <Tabs screenOptions={{
-            tabBarActiveTintColor: Colors.PRIMARY
+            tabBarActiveTintColor: Colors.PRIMARY,
+            headerShown: false
         }}>
             {tabsArray.map((tabs) => {
                 return <Tabs.Screen name={tabs.name}
