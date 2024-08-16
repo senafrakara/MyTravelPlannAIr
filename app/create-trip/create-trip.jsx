@@ -25,7 +25,7 @@ export default function CreateTrip() {
         try {
             const result_ = await setDoc(doc(db, "UserTrips", docId), {
                 userEmail: user.email,
-                tripPlan: createTripResponse,
+                tripPlan: JSON.stringify(createTripResponse),
                 tripData: JSON.stringify(tripData),
                 docId: docId
             });

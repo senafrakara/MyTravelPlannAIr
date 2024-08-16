@@ -1,23 +1,10 @@
 import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState, memo } from 'react'
-import TripItemCard from './TripItemCard';
+import React from 'react'
 import moment from 'moment/moment';
 import { Colors } from '../../constants/Colors';
 
-const UserTripList = React.memo(function UserTripList({ userTrips }) {
-    const [trips, setTrips] = useState([]);
-
-    useEffect(() => {
-        const updatedTrips = userTrips.map(trip => ({
-            ...trip,
-            tripData: JSON.parse(trip.tripData),
-            tripPlan: JSON.parse(trip.tripPlan)
-        }));
-
-        setTrips(updatedTrips);
-    }, [userTrips]);
-
-    const renderTripItem = ({ item }) => (
+export default function TripItemCard({ item }) {
+    return (
         <View>
             <Image source={require('./../../assets/images/login-page.png')}
                 style={{
@@ -94,23 +81,5 @@ const UserTripList = React.memo(function UserTripList({ userTrips }) {
 
             </View>
         </View>
-    );
-
-    return (
-        <View>
-            <View style={{
-                marginTop: 20
-            }}>
-                <FlatList
-                    data={trips}
-                    keyExtractor={item => item.docId}
-                    renderItem={renderTripItem}
-                />
-
-
-            </View>
-        </View >
     )
-});
-
-export { UserTripList };
+}
