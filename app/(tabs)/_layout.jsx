@@ -9,12 +9,12 @@ export default function TabLayout() {
         myTrip = {
             name: "myTrip", label: "My Trip"
         },
-        discover = {
-            name: "discover", label: "Discover"
-        },
-        profile = {
-            name: "profile", label: "Profile"
-        }
+        /*  discover = {
+             name: "discover", label: "Discover"
+         },
+         profile = {
+             name: "profile", label: "Profile"
+         } */
     ];
 
     const setTabBarIcon = (tabName, color) => {
