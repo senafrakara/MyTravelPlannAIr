@@ -21,7 +21,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.senafrakara.MyTravelPlannAIr"
+      "package": "com.senafrakara.MyTravelPlannAIr",
+      "buildProperties": {
+        "gradleCommand": ":app:assembleRelease"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -30,17 +33,7 @@
     },
     "plugins": [
       "expo-router",
-      "expo-build-properties",
-      {
-        "android": {
-          "compileSdkVersion": 34,
-          "targetSdkVersion": 34,
-          "buildToolsVersion": "34.0.0"
-        },
-        "ios": {
-          "deploymentTarget": "13.4"
-        }
-      }
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true
