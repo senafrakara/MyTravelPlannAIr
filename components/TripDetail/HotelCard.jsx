@@ -17,8 +17,6 @@ export default function HotelCard({ item }) {
         const result = await GetPhotoRef({ address, coordinate1, coordinate2 });
         const photoRef = result.results[0].photos[0].photo_reference;
         setPhotoRef(photoRef);
-        console.log("🚀 ~ HotelCard ~ photoRef:", photoRef)
-
     }
 
     return (
