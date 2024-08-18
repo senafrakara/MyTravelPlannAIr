@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import Login from "@/components/Login";
-import { auth } from "./../configs/FirebaseConfig";
+import { auth } from "../configs/FbConf";
 import { Redirect } from "expo-router";
 
 export default function Index() {

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigation, useRouter } from 'expo-router'
 import { Colors } from './../../../constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { auth } from "./../../../configs/FirebaseConfig"
+import { auth } from "./../../../configs/FbConf"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { INVALID_CREDENTIAL_ERROR } from "./../../../helpers/FirebaseConstants";
 

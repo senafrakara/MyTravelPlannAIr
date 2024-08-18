@@ -5,7 +5,7 @@ import { Colors } from '../../constants/Colors';
 import { CreateTripContext } from '../../context/CreateTripContext';
 import { AI_PROMPT } from '../../constants/OptionsList';
 import { chatSession } from '../../configs/AiModal';
-import { auth, db } from './../../configs/FirebaseConfig';
+import { auth, db } from './../../configs/FbConf';
 import { doc, setDoc } from "firebase/firestore";
 
 
