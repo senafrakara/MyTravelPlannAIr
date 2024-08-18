@@ -6,7 +6,7 @@ import { Redirect } from "expo-router";
 
 export default function Index() {
   const user = auth.currentUser;
-  console.log("🚀 ~ Index ~ user:", user);
+  //console.log("🚀 ~ Index ~ user:", user);
 
   return (
     <View

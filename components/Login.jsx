@@ -21,7 +21,7 @@ export default function Login() {
           fontFamily: "outfit-bold",
           fontSize: 28,
           textAlign: 'center',
-          marginTop: 15
+          marginTop: 10
         }}>
           My Travel PlannAIr
         </Text>
@@ -31,7 +31,7 @@ export default function Login() {
             fontSize: 17,
             textAlign: 'center',
             color: Colors.GRAY,
-            marginTop: 15
+            marginTop: 15,
           }}>
           Discover seamless travel planning powered by cutting-edge AI technology. Our application is
           designed to enhance every aspect of your journey, from itinerary creation to real-time recommendations, ensuring you make the most of your travels with ease.

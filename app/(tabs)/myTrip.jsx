@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import StartNewTripCard from '../../components/MyTrips/StartNewTripCard';
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from './../../configs/FirebaseConfig';
-import { UserTripList } from '../../components/MyTrips/UserTripList';
+import UserTripList from '../../components/MyTrips/UserTripList';
 
 export default function MyTrip() {
     const [userTrips, setUserTrips] = useState([]);

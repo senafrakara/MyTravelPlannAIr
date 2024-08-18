@@ -2,84 +2,90 @@ import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native'
 import React from 'react'
 import moment from 'moment/moment';
 import { Colors } from '../../constants/Colors';
+import { useRouter } from 'expo-router';
 
 export default function TripItemCard({ item }) {
+    const router = useRouter();
+
     return (
         <View>
-            <Image source={require('./../../assets/images/login-page.png')}
-                style={{
-                    width: '100%',
-                    height: 240,
-                    objectFit: 'cover',
-                    borderRadius: 15
-                }}
-            />
+            <Text style={{
+                fontFamily: 'outfit-medium',
+                fontSize: 20,
+            }}>{item.tripPlan.tripName} </Text>
+
             <View style={{
-                marginTop: 20
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                gap: 10,
+                marginTop: 10
             }}>
-                <Text style={{
-                    fontFamily: 'outfit-medium',
-                    fontSize: 24
-                }}>{item.tripPlan.tripName} </Text>
+                {item.tripData.locationInfo.photoRef &&
+                    <Image source={{
+                        uri: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + item.tripData.locationInfo.photoRef +
+                            "&key=" + process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+                    }}
+                        style={{
+                            width: 150,
+                            height: 150,
+                            objectFit: 'cover',
+                            borderRadius: 15,
+                        }}
+                    />}
 
                 <View style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    gap: 20
-
+                    gap: 10,
+                    flexDirection: 'column',
+                    justifyContent: 'space-evenly'
                 }}>
-                    <Text style={{
-                        fontSize: 17,
-                        fontFamily: 'outfit-regular'
-                    }}>
-                        {item.tripPlan.destination}
-                    </Text>
+                    <View>
+                        <Text style={{
+                            fontSize: 17,
+                            fontFamily: 'outfit-regular'
+                        }}>
+                            {item.tripPlan.destination}
+                        </Text>
 
-                    <Text style={{
-                        fontSize: 17,
-                        fontFamily: 'outfit-regular',
-                        color: Colors.GRAY
-                    }}>
-                        {moment(item.tripData.startDate).format('DD MMM yyyy')}
-                    </Text>
+                        <Text style={{
+                            fontSize: 17,
+                            fontFamily: 'outfit-regular',
+                            color: Colors.GRAY
+                        }}>
+                            {moment(item.tripData.startDate).format('DD MMM yyyy')}
+                        </Text>
 
+                        <Text style={{
+                            fontSize: 17,
+                            fontFamily: 'outfit-regular',
+                            color: Colors.GRAY
+                        }}>
+                            🚌 {item.tripData.traveler.title}
+                        </Text>
+
+                    </View>
+
+                    <TouchableOpacity style={{
+                        marginTop: 10,
+                        borderColor: Colors.PRIMARY,
+                    }}
+                        onPress={() => router.push({
+                            pathname: '/trip-details', params: {
+                                trip: JSON.stringify(item)
+                            }
+                        })}>
+                        <Text style={{
+                            color: Colors.PRIMARY,
+                            fontFamily: 'outfit-medium',
+                            fontSize: 17,
+                            textDecorationLine: 'underline'
+                        }}>
+                            SEE YOUR PLAN
+                        </Text>
+
+                    </TouchableOpacity>
                 </View>
-
-                <View style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    gap: 20
-
-                }}>
-                    <Text style={{
-                        fontSize: 17,
-                        fontFamily: 'outfit-regular',
-                        color: Colors.GRAY
-                    }}>
-                        🚌 {item.tripData.traveler.title}
-                    </Text>
-                </View>
-
-                <TouchableOpacity style={{
-                    backgroundColor: Colors.PRIMARY,
-                    padding: 15,
-                    borderRadius: 15,
-                    marginTop: 10
-                }} >
-                    <Text style={{
-                        color: Colors.WHITE,
-                        textAlign: 'center',
-                        fontFamily: 'outfit-medium',
-                        fontSize: 15
-                    }}>
-                        See Your Plan
-                    </Text>
-
-                </TouchableOpacity>
-
             </View>
-        </View>
+        </View >
     )
 }
