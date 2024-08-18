@@ -7,7 +7,7 @@ import moment from 'moment/moment';
 import FligthInfo from '../../components/TripDetail/FligthInfo';
 import HotelList from '../../components/TripDetail/HotelList';
 import TripDailyItinerary from '../../components/TripDetail/TripDailyItinerary';
-
+import Constants from 'expo-constants'
 
 export default function TripDetail() {
     const { trip } = useLocalSearchParams();
@@ -29,7 +29,7 @@ export default function TripDetail() {
 
             <Image source={{
                 uri: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + tripDetail.tripData.locationInfo.photoRef +
-                    "&key=" + process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+                    "&key=" + Constants?.expoConfig?.extra?.GOOGLE_MAPS_API_KEY
             }}
                 style={{
                     width: '100%',

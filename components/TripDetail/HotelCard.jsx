@@ -1,6 +1,7 @@
 import { View, Text, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { GetPhotoRef } from '../../services/GooglePlaceApi';
+import Constants from 'expo-constants'
 
 export default function HotelCard({ item }) {
     const [photoRef, setPhotoRef] = useState();
@@ -29,7 +30,7 @@ export default function HotelCard({ item }) {
                 source={{
                     uri: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference="
                         + photoRef +
-                        "&key=" + process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+                        "&key=" + Constants?.expoConfig?.extra?.GOOGLE_MAPS_API_KEY
                 }}
                 style={{
                     width: 180,

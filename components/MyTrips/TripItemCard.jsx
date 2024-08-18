@@ -3,6 +3,7 @@ import React from 'react'
 import moment from 'moment/moment';
 import { Colors } from '../../constants/Colors';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants'
 
 export default function TripItemCard({ item }) {
     const router = useRouter();
@@ -24,7 +25,7 @@ export default function TripItemCard({ item }) {
                 {item.tripData.locationInfo.photoRef &&
                     <Image source={{
                         uri: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + item.tripData.locationInfo.photoRef +
-                            "&key=" + process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+                            "&key=" + Constants?.expoConfig?.extra?.GOOGLE_MAPS_API_KEY
                     }}
                         style={{
                             width: 150,

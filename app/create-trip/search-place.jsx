@@ -4,6 +4,7 @@ import { useNavigation, useRouter } from 'expo-router'
 import { Colors } from './../../constants/Colors';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { CreateTripContext } from "./../../context/CreateTripContext"
+import Constants from 'expo-constants'
 
 export default function SearchPlace() {
     const { tripData, setTripData } = useContext(CreateTripContext);
@@ -48,7 +49,7 @@ export default function SearchPlace() {
                     router.push('/create-trip/select-traveler');
                 }}
                 query={{
-                    key: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+                    key: Constants?.expoConfig?.extra?.GOOGLE_MAPS_API_KEY,
                     language: 'en',
                 }}
                 styles={{
