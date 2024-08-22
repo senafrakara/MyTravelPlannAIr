@@ -23,7 +23,7 @@ export default function ReviewTrip() {
             padding: 25,
             paddingTop: 75,
             backgroundColor: Colors.WHITE,
-            height: '100%'
+            height: '100%',
         }}>
             <Text style={{
                 fontSize: 35,

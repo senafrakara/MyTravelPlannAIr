@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Colors } from './../../constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
 import StartNewTripCard from '../../components/MyTrips/StartNewTripCard';
-import { collection, query, where, getDocs, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, orderBy } from "firebase/firestore";
 import { auth, db } from '../../configs/FbConf';
 import UserTripList from '../../components/MyTrips/UserTripList';
 import { useRouter } from 'expo-router'
@@ -26,9 +26,9 @@ export default function MyTrip() {
             const q = query(collection(db, "UserTrips"), where("userEmail", "==", user?.email));
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-                const data = doc.data();
+                const data = doc.data()
                 const docId = data.docId;
-                setUserTrips(prev => [...prev, { docId: data }]);
+                setUserTrips(oldArray => [data, ...oldArray]);
 
             });
             console.log("🚀 ~ GetUserAllTripPlans ~ userTrips:", userTrips)

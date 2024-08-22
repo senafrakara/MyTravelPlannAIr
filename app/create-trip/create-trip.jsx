@@ -1,11 +1,11 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, ToastAndroid, AlertIOS, Platform } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigation, useRouter } from 'expo-router'
 import { Colors } from '../../constants/Colors';
 import { CreateTripContext } from '../../context/CreateTripContext';
 import { AI_PROMPT } from '../../constants/OptionsList';
 import { chatSession } from '../../configs/AiModal';
-import { auth, db } from './../../configs/FbConf';
+import { auth, db, nowDate } from './../../configs/FbConf';
 import { doc, setDoc } from "firebase/firestore";
 
 
@@ -18,6 +18,8 @@ export default function CreateTrip() {
 
 
     useEffect(() => {
+        console.log("🚀 ~ nowDate:", nowDate)
+
         GenerateAiTrip()
     }, []);
 
@@ -27,14 +29,19 @@ export default function CreateTrip() {
                 userEmail: user.email,
                 tripPlan: JSON.stringify(createTripResponse),
                 tripData: JSON.stringify(tripData),
-                docId: docId
+                docId: docId,
+                created: nowDate
             });
+            setLoading(false);
             router.push('(tabs)/myTrip');
-            console.log("🚀 ~ result_:", result_)
 
         } catch (error) {
             console.log("🚀 ~ insertTrip ~ error:", error)
-            // Show message on screen
+            if (Platform.OS === 'android') {
+                ToastAndroid.show("Couldn't Create Trip!", ToastAndroid.LONG);
+            } else {
+                AlertIOS.alert("Couldn't Create Trip!");
+            }
         }
     }
 
@@ -53,8 +60,6 @@ export default function CreateTrip() {
         const response = result.response.text();
         console.log("🚀 ~ GenerateAiTrip ~ response:", response)
         const createTripResponse = JSON.parse(response);
-
-        setLoading(false);
 
         const docId = (Date.now()).toString();
         insertTrip(docId, createTripResponse);

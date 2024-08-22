@@ -8,7 +8,6 @@ import Constants from 'expo-constants'
 export default function TripItemCard({ item }) {
     const router = useRouter();
 
-
     return (item &&
         <View style={{ marginTop: 20 }}>
             <Text style={{

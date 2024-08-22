@@ -21,5 +21,6 @@ if (!firebase.apps.length) {
 const app = firebase.initializeApp(fbConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
+const nowDate = new Date(firebase.firestore.Timestamp.now().toDate().setHours(0, 0, 0, 0));
 
-export { app, db, auth };
+export { app, db, auth, nowDate };
