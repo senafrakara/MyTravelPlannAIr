@@ -1,30 +1,46 @@
 import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import moment from 'moment/moment';
 import { Colors } from '../../constants/Colors';
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants'
 
 export default function TripItemCard({ item }) {
+    const [trip, setTrip] = useState({});
+
     const router = useRouter();
 
+    useEffect(() => {
+        const tripPlan = JSON.parse(item.docId.tripPlan);
+        const tripData = JSON.parse(item.docId.tripData);
+        const userEmail = item.docId.userEmail;
+
+        const updatedTrip = {
+            docId: item.docId,
+            userEmail: userEmail,
+            tripPlan: tripPlan,
+            tripData: tripData
+        }
+        setTrip(updatedTrip);
+    }, [item]);
+
     return (
-        <View>
+        <View style={{ marginTop: 20 }}>
             <Text style={{
-                fontFamily: 'outfit-medium',
-                fontSize: 20,
-            }}>{item.tripPlan.tripName} </Text>
+                fontFamily: 'outfit-bold',
+                fontSize: 22,
+            }}>{trip.tripPlan.tripName} </Text>
 
             <View style={{
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 gap: 10,
-                marginTop: 10
+                marginTop: 5
             }}>
-                {item.tripData.locationInfo.photoRef &&
+                {trip.tripData.locationInfo.photoRef &&
                     <Image source={{
-                        uri: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + item.tripData.locationInfo.photoRef +
+                        uri: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + trip.tripData.locationInfo.photoRef +
                             "&key=" + Constants?.expoConfig?.extra?.GOOGLE_MAPS_API_KEY
                     }}
                         style={{
@@ -45,7 +61,7 @@ export default function TripItemCard({ item }) {
                             fontSize: 17,
                             fontFamily: 'outfit-regular'
                         }}>
-                            {item.tripPlan.destination}
+                            {trip.tripPlan.destination}
                         </Text>
 
                         <Text style={{
@@ -53,7 +69,7 @@ export default function TripItemCard({ item }) {
                             fontFamily: 'outfit-regular',
                             color: Colors.GRAY
                         }}>
-                            {moment(item.tripData.startDate).format('DD MMM yyyy')}
+                            {moment(trip.tripData.startDate).format('DD MMM yyyy')}
                         </Text>
 
                         <Text style={{
@@ -61,7 +77,7 @@ export default function TripItemCard({ item }) {
                             fontFamily: 'outfit-regular',
                             color: Colors.GRAY
                         }}>
-                            🚌 {item.tripData.traveler.title}
+                            🚌 {trip.tripData.traveler.title}
                         </Text>
 
                     </View>
@@ -72,7 +88,7 @@ export default function TripItemCard({ item }) {
                     }}
                         onPress={() => router.push({
                             pathname: '/trip-details', params: {
-                                trip: JSON.stringify(item)
+                                trip: JSON.stringify(trip)
                             }
                         })}>
                         <Text style={{
