@@ -6,30 +6,15 @@ import { useRouter } from 'expo-router';
 import Constants from 'expo-constants'
 
 export default function TripItemCard({ item }) {
-    const [trip, setTrip] = useState({});
-
     const router = useRouter();
 
-    useEffect(() => {
-        const tripPlan = JSON.parse(item.docId.tripPlan);
-        const tripData = JSON.parse(item.docId.tripData);
-        const userEmail = item.docId.userEmail;
 
-        const updatedTrip = {
-            docId: item.docId,
-            userEmail: userEmail,
-            tripPlan: tripPlan,
-            tripData: tripData
-        }
-        setTrip(updatedTrip);
-    }, [item]);
-
-    return (
+    return (item &&
         <View style={{ marginTop: 20 }}>
             <Text style={{
                 fontFamily: 'outfit-bold',
                 fontSize: 22,
-            }}>{trip.tripPlan.tripName} </Text>
+            }}>{item.tripPlan.tripName} </Text>
 
             <View style={{
                 display: 'flex',
@@ -38,9 +23,9 @@ export default function TripItemCard({ item }) {
                 gap: 10,
                 marginTop: 5
             }}>
-                {trip.tripData.locationInfo.photoRef &&
+                {item.tripData.locationInfo.photoRef &&
                     <Image source={{
-                        uri: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + trip.tripData.locationInfo.photoRef +
+                        uri: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + item.tripData.locationInfo.photoRef +
                             "&key=" + Constants?.expoConfig?.extra?.GOOGLE_MAPS_API_KEY
                     }}
                         style={{
@@ -61,7 +46,7 @@ export default function TripItemCard({ item }) {
                             fontSize: 17,
                             fontFamily: 'outfit-regular'
                         }}>
-                            {trip.tripPlan.destination}
+                            {item.tripPlan.destination}
                         </Text>
 
                         <Text style={{
@@ -69,7 +54,7 @@ export default function TripItemCard({ item }) {
                             fontFamily: 'outfit-regular',
                             color: Colors.GRAY
                         }}>
-                            {moment(trip.tripData.startDate).format('DD MMM yyyy')}
+                            {moment(item.tripData.startDate).format('DD MMM yyyy')}
                         </Text>
 
                         <Text style={{
@@ -77,7 +62,7 @@ export default function TripItemCard({ item }) {
                             fontFamily: 'outfit-regular',
                             color: Colors.GRAY
                         }}>
-                            🚌 {trip.tripData.traveler.title}
+                            🚌 {item.tripData.traveler.title}
                         </Text>
 
                     </View>
@@ -88,7 +73,7 @@ export default function TripItemCard({ item }) {
                     }}
                         onPress={() => router.push({
                             pathname: '/trip-details', params: {
-                                trip: JSON.stringify(trip)
+                                trip: JSON.stringify(item)
                             }
                         })}>
                         <Text style={{

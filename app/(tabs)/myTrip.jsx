@@ -29,16 +29,9 @@ export default function MyTrip() {
                 const data = doc.data();
                 const docId = data.docId;
                 setUserTrips(prev => [...prev, { docId: data }]);
-                /*   trips.push({
-                      docId: data
-                  }); */
 
             });
-            //    console.log("🚀 ~ GetUserAllTripPlans ~ trips:", trips)
-            // setUserTrips(trips);
             console.log("🚀 ~ GetUserAllTripPlans ~ userTrips:", userTrips)
-
-
             setLoading(false);
 
         } catch (error) {
