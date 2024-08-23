@@ -5,7 +5,6 @@ import TripItemCard from './TripItemCard';
 export default function UserTripList({ userTrips }) {
 
     const renderItem = ({ item }) => {
-        console.log("🚀 ~ renderItem ~ item:", item)
         const docId = item.docId;
         const tripPlan = JSON.parse(item.tripPlan);
         const tripData = JSON.parse(item.tripData);

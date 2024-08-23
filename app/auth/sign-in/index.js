@@ -6,12 +6,13 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { auth } from "./../../../configs/FbConf"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { INVALID_CREDENTIAL_ERROR } from "./../../../helpers/FirebaseConstants";
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 export default function SignIn() {
   const navigation = useNavigation();
   const router = useRouter();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
 
   useEffect(() => {
     navigation.setOptions({
@@ -21,7 +22,31 @@ export default function SignIn() {
   //if you dont give empty array, it executes infinite time
   //but if you give empty array, it executes once.
 
-  const onSignIn = () => {
+
+  const schema = yup.object().shape({
+    email: yup
+      .string()
+      .email('Invalid email'),
+    password: yup
+      .string()
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSignIn = (formData) => {
+    console.log("🚀 ~ onSignIn ~ formData:", formData)
+    const email = formData.email;
+    const password = formData.password;
     if (!email && !password) {
       if (Platform.OS === 'android') {
         ToastAndroid.show("Please Enter Email and Password!", ToastAndroid.LONG);
@@ -92,33 +117,55 @@ export default function SignIn() {
       </Text>
 
       <View style={{ marginTop: 20 }}>
-        <TextInput
-          onChangeText={(value) => setEmail(value)}
-          style={styles.input}
-          placeholder='Enter Email'>
-        </TextInput>
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              value={value}
+              onChangeText={onChange}
+              placeholder="Email"
+            />
+          )}
+          name="email"
+        />
+        {errors.email && <Text>{errors.email.message}</Text>}
       </View>
 
       <View style={{ marginTop: 20 }}>
-        <TextInput
-          style={styles.input}
-          secureTextEntry={true}
-          onChangeText={(value) => setPassword(value)}
-          placeholder='Enter Password'>
-        </TextInput>
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              value={value}
+              onChangeText={onChange}
+              placeholder="Password"
+              secureTextEntry
+            />
+          )}
+          name="password"
+        />
+        {errors.password && <Text>{errors.password.message}</Text>}
       </View>
-
       <TouchableOpacity style={{
         padding: 20,
         backgroundColor: Colors.PRIMARY,
         borderRadius: 15,
-        marginTop: 50
+        marginTop: 35
       }}
-        onPress={onSignIn}
-      >
+        onPress={handleSubmit(onSignIn)}                >
         <Text style={{
           color: Colors.WHITE,
-          textAlign: 'center'
+          textAlign: 'center',
+          fontFamily: 'outfit-regular',
+          fontSize: 17
         }}>Sign In</Text>
       </TouchableOpacity>
 
