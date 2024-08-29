@@ -5,6 +5,10 @@ import { Colors } from './../../../constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./../../../configs/FbConf"
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { updateProfile } from 'firebase/auth';
 
 
 export default function SignUp() {
@@ -12,10 +16,10 @@ export default function SignUp() {
   const navigation = useNavigation();
   const router = useRouter();
 
+  const [firebaseUser, setFirebaseUser] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [fullname, setFullname] = useState();
-  console.log("🚀 ~ auth:", auth)
 
   useEffect(() => {
     navigation.setOptions({
@@ -23,7 +27,35 @@ export default function SignUp() {
     })
   }, []);
 
-  const onCreateAccount = () => {
+  const schema = yup.object().shape({
+    email: yup
+      .string()
+      .required('Email is required')
+      .email('Invalid email'),
+    fullname: yup
+      .string(),
+    password: yup
+      .string()
+      .min(8, 'Password must contain at least 8 characters'),
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      email: '',
+      password: '',
+      fullname: '',
+    },
+  });
+
+  const onCreateAccount = (formData) => {
+    const email = formData.email;
+    const password = formData.password;
+    const fullname = formData.fullName;
 
     if (!email && !password && !fullname) {
       if (Platform.OS == 'android') {
@@ -33,19 +65,31 @@ export default function SignUp() {
       }
       return;
     }
-
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("🚀 ~ .then ~ user:", user);
-        router.replace('/myTrip');
+      .then(async () => {
+        try {
+          await auth.currentUser.reload();
 
+          if (auth.currentUser) {
+            await updateProfile(auth.currentUser, { displayName: fullname });
+
+            await auth.currentUser.reload();
+
+            console.log("🚀 ~ Updated auth.currentUser:", auth.currentUser);
+
+            router.replace('/myTrip');
+          } else {
+            console.error("No current user available.");
+          }
+        } catch (error) {
+          console.error("🚀 ~ onCreateAccount ~ error:", error);
+        }
       })
       .catch((error) => {
         const errorCode = error.code;
-        console.log("🚀 ~ onCreateAccount ~ errorCode:", errorCode)
         const errorMessage = error.message;
-        console.log("🚀 ~ onCreateAccount ~ errorMessage:", errorMessage)
+        console.error("🚀 ~ onCreateAccount ~ errorCode:", errorCode);
+        console.error("🚀 ~ onCreateAccount ~ errorMessage:", errorMessage);
       });
   }
 
@@ -65,31 +109,61 @@ export default function SignUp() {
       }}>Create New Account</Text>
 
       <View style={{ marginTop: 20 }}>
-        <TextInput
-          style={styles.input}
-          placeholder='Full Name'
-          onChangeText={(value) => setFullname(value)}
-        >
-        </TextInput>
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              value={value}
+              onChangeText={onChange}
+              placeholder="Full Name"
+
+            />
+          )}
+          name="fullname"
+        />
       </View>
 
       <View style={{ marginTop: 20 }}>
-        <TextInput
-          style={styles.input}
-          placeholder='Enter Email'
-          onChangeText={(value) => setEmail(value)}
-        >
-        </TextInput>
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              value={value}
+              onChangeText={onChange}
+              placeholder="Email"
+            />
+          )}
+          name="email"
+        />
+        {errors.email && <Text>{errors.email.message}</Text>}
       </View>
 
       <View style={{ marginTop: 20 }}>
-        <TextInput
-          style={styles.input}
-          secureTextEntry={true}
-          placeholder='Enter Password'
-          onChangeText={(value) => setPassword(value)}
-        >
-        </TextInput>
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              value={value}
+              onChangeText={onChange}
+              placeholder="Password"
+              secureTextEntry
+            />
+          )}
+          name="password"
+        />
+        {errors.password && <Text>{errors.password.message}</Text>}
       </View>
 
       <Pressable style={{
@@ -98,7 +172,7 @@ export default function SignUp() {
         borderRadius: 15,
         marginTop: 50
       }}
-        onPress={onCreateAccount}
+        onPress={handleSubmit(onCreateAccount)}
       >
         <Text style={{
           color: Colors.WHITE,
@@ -124,10 +198,25 @@ export default function SignUp() {
   )
 }
 const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    marginTop: 80,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  inputContainer: {
+    marginBottom: 16,
+  },
   input: {
     padding: 15,
     borderWidth: 1,
     borderRadius: 15,
     borderColor: Colors.GRAY
-  }
+  },
 });

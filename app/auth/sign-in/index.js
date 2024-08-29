@@ -60,6 +60,7 @@ export default function SignIn() {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log("🚀 ~ .then ~ user:", user);
+
         router.replace('/myTrip');
 
       })

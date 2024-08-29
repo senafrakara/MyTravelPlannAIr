@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ToastAndroid, AlertIOS, Platform } from 'react-native';
 import { auth } from './../../configs/FbConf';
 import { Colors } from '../../constants/Colors';
-import { signOut } from "firebase/auth";
+import { confirmPasswordReset, signOut } from "firebase/auth";
 import { useNavigation, useRouter } from 'expo-router';
 import * as yup from 'yup';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { updateEmail, updatePassword, updateProfile } from "firebase/auth";
+import { updateEmail, updatePassword, updateProfile, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 
 
 export default function Profile() {
     const user = auth.currentUser;
-    const [fullname, setFullname] = useState('');
+
+    const [firebaseUser, setFirebaseUser] = useState();
+    const [fullName, setFullname] = useState(user.email);
     const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState('');
     const router = useRouter();
@@ -24,6 +26,7 @@ export default function Profile() {
             headerTransparent: true,
             headerTitle: 'My Profile'
         })
+        console.log("🚀 ~ Profile ~ user.displayName:", user.displayName)
 
     }, [navigation]);
 
@@ -35,8 +38,14 @@ export default function Profile() {
         fullname: yup
             .string(),
         password: yup
+            .string(),
+        newPassword: yup
             .string()
             .min(8, 'Password must contain at least 8 characters'),
+        confirmPassword: yup
+            .string()
+            .min(8, 'Password must contain at least 8 characters')
+
     });
 
     const {
@@ -47,53 +56,107 @@ export default function Profile() {
         resolver: yupResolver(schema),
         defaultValues: {
             email: user.email,
-            fullname: '',
+            fullname: user.displayName ?? '',
             password: '',
+            newPassword: '',
+            confirmPassword: ''
         },
     });
 
-    useEffect(() => {
-        setEmail(user.email);
-    }, []);
+    /*     useEffect(() => {
+            setEmail(user.email);
+            setFirebaseUser(user);
+        }, []); */
 
     const onPressSend = (formData) => {
+        console.log("🚀 ~ onPressSend ~ formData:", formData)
         const changedEmail = formData.email;
-        const newPassword = formData.password;
-        const newFullName = formData.fullName;
+        const password = formData.password;
+        const newPassword = formData.newPassword;
+        const confirmPassword = formData.confirmPassword;
+        const newFullName = formData.fullname;
 
-        if (changedEmail !== '') {
-            console.log("🚀 ~ onPressSend ~ formData:", formData)
-            updateEmail(user, changedEmail).then(() => {
-                // Email updated!
-                console.log("email updated");
-                // ...
+        let error = false;
+
+        if (changedEmail !== '' && user.email) {
+            updateEmail(user, changedEmail).then(async () => {
+                await user.reload();
             }).catch((error) => {
-                // An error occurred
-                // ...
+                console.log("🚀 ~ updateEmail ~ error:", error)
+                error = true;
+
             });
         }
 
-        if (newPassword !== '') {
-            updatePassword(user, newPassword).then(() => {
-                // Update successful.
-                console.log("password updated");
-            }).catch((error) => {
-                // An error ocurred
-                // ...
-            });
+        var credential = EmailAuthProvider.credential(
+            user.email,
+            password
+        );
+
+        if (password && newPassword && confirmPassword &&
+            newPassword === confirmPassword) {
+
+            reauthenticateWithCredential(user, credential)
+                .then((result) => {
+                    updatePassword(user, newPassword).then(async () => {
+                        await user.reload();
+                    }).catch((error) => {
+                        console.log("🚀 ~ updatePassword ~ error:", error)
+                        if (Platform.OS === 'android') {
+                            ToastAndroid.show("We Couldn't Change Your Password, Please Try Later!", ToastAndroid.LONG);
+                        } else {
+                            AlertIOS.alert("We Couldn't Change Your Password, Please Try Later!");
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.log("🚀 ~ onPressSend ~ error:", error)
+                    error = true;
+
+                    if (Platform.OS === 'android') {
+                        ToastAndroid.show("Your Current Password is Not Correct!", ToastAndroid.LONG);
+                    } else {
+                        AlertIOS.alert("Your Current Password is Not Correct!");
+                    }
+                });
+
+        } else {
+            error = true;
+
+            if (Platform.OS === 'android') {
+                ToastAndroid.show("New Password and Confirm Password Are Not Same!", ToastAndroid.LONG);
+            } else {
+                AlertIOS.alert("New Password and Confirm Password Are Not Same!");
+            }
         }
 
         if (newFullName !== '') {
             updateProfile(user, {
-                fullName: newFullName
-            }).then(() => {
-                // Profile updated!
-                console.log("fullname updated");
-                // ...
+                displayName: newFullName
+            }).then(async () => {
+                await user.reload().then(() => {
+                    setFirebaseUser(user);
+                });
+                console.log("🚀 ~ user.reload ~ user:", user)
+
             }).catch((error) => {
-                // An error occurred
-                // ...
+                error = true;
+
             });
+        }
+
+        if (error === false) {
+            if (Platform.OS === 'android') {
+                ToastAndroid.show("Saved Your Changes!", ToastAndroid.LONG);
+            } else {
+                AlertIOS.alert("Saved Your Changes");
+            }
+        } else {
+            if (Platform.OS === 'android') {
+                ToastAndroid.show("We Couldn't Update Your Profile, Please Try Later!", ToastAndroid.LONG);
+            } else {
+                AlertIOS.alert("We Couldn't Update Your Profile, Please Try Later!");
+            }
         }
 
     };
@@ -121,8 +184,8 @@ export default function Profile() {
                         render={({ field: { onChange, value } }) => (
                             <TextInput
                                 style={styles.input}
-                                value={fullname}
-                                onChangeText={setFullname}
+                                value={value ?? firebaseUser.fullName}
+                                onChangeText={onChange}
                                 placeholder="Full Name"
 
                             />
@@ -139,8 +202,8 @@ export default function Profile() {
                         render={({ field: { onChange, value } }) => (
                             <TextInput
                                 style={styles.input}
-                                value={email}
-                                onChangeText={setEmail}
+                                value={value ?? firebaseUser.email}
+                                onChangeText={onChange}
                             />
                         )}
                         name="email"
@@ -156,13 +219,51 @@ export default function Profile() {
                         render={({ field: { onChange, value } }) => (
                             <TextInput
                                 style={styles.input}
-                                value={password}
-                                onChangeText={setPassword}
-                                placeholder="Password"
+                                value={value}
+                                onChangeText={onChange}
+                                placeholder="Current Password"
                                 secureTextEntry
                             />
                         )}
                         name="password"
+                    />
+                    {errors.password && <Text>{errors.password.message}</Text>}
+                </View>
+                <View style={styles.inputContainer}>
+                    <Controller
+                        control={control}
+                        rules={{
+                            required: true,
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput
+                                style={styles.input}
+                                value={value}
+                                onChangeText={onChange}
+                                placeholder="New Password"
+                                secureTextEntry
+                            />
+                        )}
+                        name="newPassword"
+                    />
+                    {errors.password && <Text>{errors.password.message}</Text>}
+                </View>
+                <View style={styles.inputContainer}>
+                    <Controller
+                        control={control}
+                        rules={{
+                            required: true,
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput
+                                style={styles.input}
+                                value={value}
+                                onChangeText={onChange}
+                                placeholder="Confirm Password"
+                                secureTextEntry
+                            />
+                        )}
+                        name="confirmPassword"
                     />
                     {errors.password && <Text>{errors.password.message}</Text>}
                 </View>
@@ -172,7 +273,7 @@ export default function Profile() {
                     borderRadius: 15,
                     marginTop: 35
                 }}
-                    onPress={handleSubmit(onPressSend)}                >
+                    onPress={handleSubmit(onPressSend)}>
                     <Text style={{
                         color: Colors.WHITE,
                         textAlign: 'center',
