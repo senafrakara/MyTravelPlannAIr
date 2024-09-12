@@ -6,12 +6,11 @@ Welcome to MyTravelPlannAIr! This is an innovative travel planning application d
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Features
-AI-Powered Itineraries: Generate custom travel plans based on your preferences, including destinations, activities, and accommodations.
-Interactive Map Integration: Visualize your travel route and points of interest on an interactive map.
-Personalized Recommendations: Receive tailored suggestions for restaurants, attractions, and local experiences.
-Travel Budget Management: Track and manage your expenses with budget-friendly tips and cost estimations.
-User Profiles: Save and manage multiple travel profiles with specific preferences and history.
-Weather Forecasting: Get real-time weather updates for your travel destinations.
+- AI-Powered Itineraries: Generate custom travel plans based on your preferences, including destinations, activities, and accommodations.
+- Interactive Map Integration: Visualize your travel route and points of interest on an interactive map.
+- Personalized Recommendations: Receive tailored suggestions for restaurants, attractions, and local experiences.
+- Travel Budget Management: Track and manage your expenses with budget-friendly tips and cost estimations.
+- User Profiles: Save and manage multiple travel profiles with specific preferences and history.
 
 ## Get started
 
